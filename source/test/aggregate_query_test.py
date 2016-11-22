@@ -1,4 +1,6 @@
+import os.path
 import unittest
+import uuid
 from flask import current_app, json
 from aggregate_query import create_app, db
 from aggregate_query.api.schema import *
@@ -120,7 +122,8 @@ class AggregateQueryTestCase(unittest.TestCase):
         queries = data["aggregate_queries"]
         query = queries[0]
         uri = query["_links"]["self"]
-        uri += "999"  # Invalidate uri
+        # Invalidate uri
+        uri = os.path.join(os.path.split(uri)[0], str(uuid.uuid4()))
         response = self.client.get(uri)
 
         data = response.data.decode("utf8")

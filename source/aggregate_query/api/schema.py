@@ -1,4 +1,5 @@
 import datetime
+import uuid
 from marshmallow import fields, post_dump, post_load, pre_load, ValidationError
 from .. import ma
 from .model import AggregateQueryModel
@@ -27,14 +28,14 @@ class AggregateQuerySchema(ma.Schema):
     class Meta:
         fields = ("model", "status", "_links")
 
-    id = fields.Int(dump_only=True)
+    id = fields.UUID(dump_only=True)
     model = fields.Str(required=False, missing="")
     status = fields.Str(required=False, missing="draft",
         validate=must_be_one_of(["draft", "finished"]))
     posted_at = fields.DateTime(dump_only=True,
         missing=datetime.datetime.utcnow().isoformat())
     _links = ma.Hyperlinks({
-            "self": ma.URLFor("api.aggregate_query", id="<id>"),
+            "self": ma.URLFor("api.aggregate_query", query_id="<id>"),
             "collection": ma.URLFor("api.aggregate_queries")
         })
 
@@ -72,6 +73,7 @@ class AggregateQuerySchema(ma.Schema):
     def make_object(self,
             data):
         return AggregateQueryModel(
+            id=uuid.uuid4(),
             model=data["model"],
             status = data["status"],
             posted_at=datetime.datetime.utcnow()

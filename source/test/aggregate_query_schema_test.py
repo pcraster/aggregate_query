@@ -1,5 +1,6 @@
 import datetime
 import unittest
+import uuid
 from aggregate_query import create_app
 from aggregate_query.api.schema import *
 
@@ -31,7 +32,7 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
 
         self.assertFalse(errors)
         self.assertTrue(hasattr(data, "id"))
-        self.assertTrue(data.id is None)
+        self.assertTrue(isinstance(data.id, uuid.UUID))
 
         self.assertTrue(hasattr(data, "posted_at"))
         self.assertTrue(isinstance(data.posted_at, datetime.datetime))

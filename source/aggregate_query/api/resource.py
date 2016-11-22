@@ -12,9 +12,9 @@ aggregate_query_schema = AggregateQuerySchema()
 class AggregateQueryResource(Resource):
 
     def get(self,
-            id):
+            query_id):
 
-        query = AggregateQueryModel.query.get(id)
+        query = AggregateQueryModel.query.get(query_id)
 
         if query is None:
             raise BadRequest("Aggregate query could not be found")
