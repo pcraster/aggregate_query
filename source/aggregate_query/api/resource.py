@@ -12,8 +12,10 @@ aggregate_query_schema = AggregateQuerySchema()
 class AggregateQueryResource(Resource):
 
     def get(self,
+            user_id,
             query_id):
 
+        # user_id is not needed
         query = AggregateQueryModel.query.get(query_id)
 
         if query is None:
@@ -31,6 +33,25 @@ class AggregateQueryResource(Resource):
 
 class AggregateQueriesResource(Resource):
 
+    def get(self,
+            user_id):
+
+        queries = AggregateQueryModel.query.filter_by(user=user_id)
+        data, errors = aggregate_query_schema.dump(queries, many=True)
+
+        if errors:
+            raise InternalServerError(errors)
+
+        assert isinstance(data, dict), data
+
+
+        return data
+
+
+class AggregateQueriesAllResource(Resource):
+
+
+    # TODO Only call this from admin interface!
     def get(self):
 
         queries = AggregateQueryModel.query.all()

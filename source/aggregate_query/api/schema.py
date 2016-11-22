@@ -26,17 +26,21 @@ def must_be_one_of(
 class AggregateQuerySchema(ma.Schema):
 
     class Meta:
-        fields = ("model", "status", "_links")
+        # Fields to include in the serialized result.
+        fields = ("user", "model", "status", "_links")
+
 
     id = fields.UUID(dump_only=True)
+    user = fields.UUID(required=True)
     model = fields.Str(required=False, missing="")
     status = fields.Str(required=False, missing="draft",
         validate=must_be_one_of(["draft", "finished"]))
     posted_at = fields.DateTime(dump_only=True,
         missing=datetime.datetime.utcnow().isoformat())
     _links = ma.Hyperlinks({
-            "self": ma.URLFor("api.aggregate_query", query_id="<id>"),
-            "collection": ma.URLFor("api.aggregate_queries")
+            "self": ma.URLFor("api.aggregate_query", user_id="<user>",
+                query_id="<id>"),
+            "collection": ma.URLFor("api.aggregate_queries", user_id="<user>")
         })
 
 
@@ -74,6 +78,7 @@ class AggregateQuerySchema(ma.Schema):
             data):
         return AggregateQueryModel(
             id=uuid.uuid4(),
+            user=data["user"],
             model=data["model"],
             status = data["status"],
             posted_at=datetime.datetime.utcnow()

@@ -24,15 +24,59 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
         self.app_context.pop()
 
 
-    def test_empty(self):
+    def test_empty1(self):
+        client_data = {
+            }
+        data, errors = self.schema.load(client_data)
+
+        self.assertTrue(errors)
+        self.assertEqual(errors, {
+                "_schema": ["Input data must have a aggregate_query key"]
+            })
+
+
+    def test_empty2(self):
         client_data = {
                 "aggregate_query": {}
             }
         data, errors = self.schema.load(client_data)
 
+        self.assertTrue(errors)
+        self.assertEqual(errors, {
+                "user": ["Missing data for required field."]
+            })
+
+
+    def test_invalid_user(self):
+        client_data = {
+                "aggregate_query": {
+                    "user": "blah"
+                }
+            }
+        data, errors = self.schema.load(client_data)
+
+        self.assertTrue(errors)
+        self.assertEqual(errors, {
+                "user": ["Not a valid UUID."]
+            })
+
+
+    def test_empty3(self):
+
+        client_data = {
+                "aggregate_query": {
+                    "user": uuid.uuid4()
+                }
+            }
+        data, errors = self.schema.load(client_data)
+
         self.assertFalse(errors)
+
         self.assertTrue(hasattr(data, "id"))
         self.assertTrue(isinstance(data.id, uuid.UUID))
+
+        self.assertTrue(hasattr(data, "user"))
+        self.assertTrue(isinstance(data.user, uuid.UUID))
 
         self.assertTrue(hasattr(data, "posted_at"))
         self.assertTrue(isinstance(data.posted_at, datetime.datetime))
@@ -43,7 +87,7 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
         self.assertTrue(hasattr(data, "status"))
         self.assertEqual(data.status, "draft")
 
-        data.id = 5
+        data.id = uuid.uuid4()
         data, errors = self.schema.dump(data)
 
         self.assertFalse(errors)
@@ -52,6 +96,7 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
         query = data["aggregate_query"]
 
         self.assertTrue("id" not in query)
+        self.assertTrue("user" in query)
         self.assertTrue("posted_at" not in query)
 
         self.assertTrue("model" in query)
@@ -66,3 +111,7 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
 
         self.assertTrue("self" in links)
         self.assertTrue("collection" in links)
+
+
+if __name__ == "__main__":
+    unittest.main()
