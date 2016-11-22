@@ -1,6 +1,6 @@
 import unittest
 from flask import current_app, json
-from aggregate_query import create_app, db
+from aggregate_query import create_app
 
 
 class AppTest(unittest.TestCase):
@@ -12,12 +12,8 @@ class AppTest(unittest.TestCase):
 
         self.client = self.app.test_client()
 
-        # db.create_all()
-
 
     def tearDown(self):
-        # db.session.remove()
-        # db.drop_all()
         self.app_context.pop()
 
 
@@ -35,6 +31,16 @@ class AppTest(unittest.TestCase):
         self.assertEqual(response.status_code, 200, data)
         data = json.loads(data)
         self.assertEqual(data, {"response": "pong"})
+
+
+    def test_not_found(self):
+        response = self.client.get("/meh")
+        data = response.data.decode("utf8")
+        self.assertEqual(response.status_code, 404, data)
+        data = json.loads(data)
+        self.assertEqual(data["status_code"], 404)
+        self.assertNotEqual(data["message"].find(
+            "requested URL was not found on the server"), -1)
 
 
 if __name__ == "__main__":

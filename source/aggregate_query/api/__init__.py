@@ -1,7 +1,9 @@
 from flask import Blueprint
+from flask_restful import Api
 
 
-api = Blueprint("api", __name__)
+api_blueprint = Blueprint("api", __name__)
+api_restful = Api(api_blueprint)
 
 
-from . import ping
+from . import aggregate_query, error, ping

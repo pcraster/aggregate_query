@@ -1,7 +1,7 @@
 from flask import jsonify
-from . import api
+from . import api_blueprint
 
 
-@api.route("/ping")
+@api_blueprint.route("/ping")
 def ping():
     return jsonify(response="pong"), 200
