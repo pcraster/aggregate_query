@@ -54,7 +54,8 @@ class TestingConfiguration(Configuration):
 
 class ProductionConfiguration(Configuration):
 
-    SQLALCHEMY_DATABASE_URI = os.environ.get("AGGREGATE_QUERY_DATABASE_URI") or \
+    SQLALCHEMY_DATABASE_URI = \
+        os.environ.get("AGGREGATE_QUERY_DATABASE_URI") or \
         "sqlite:///" + os.path.join(tempfile.gettempdir(),
             "aggregate_query.sqlite")
 

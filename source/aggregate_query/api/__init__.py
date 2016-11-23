@@ -6,4 +6,4 @@ api_blueprint = Blueprint("api", __name__)
 api_restful = Api(api_blueprint)
 
 
-from . import aggregate_query, error, ping
+from . import aggregate_query, ping
