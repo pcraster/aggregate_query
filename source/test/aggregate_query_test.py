@@ -53,7 +53,7 @@ class AggregateQueryTestCase(unittest.TestCase):
                 content_type="application/json")
             data = response.data.decode("utf8")
 
-            self.assertEqual(response.status_code, 200, "{}: {}".format(
+            self.assertEqual(response.status_code, 201, "{}: {}".format(
                 response.status_code, data))
 
     def do_test_get_aggregate_queries_by_user(self,
@@ -195,7 +195,7 @@ class AggregateQueryTestCase(unittest.TestCase):
             content_type="application/json")
         data = response.data.decode("utf8")
 
-        self.assertEqual(response.status_code, 200, "{}: {}".format(
+        self.assertEqual(response.status_code, 201, "{}: {}".format(
             response.status_code, data))
 
         data = json.loads(data)
@@ -232,7 +232,7 @@ class AggregateQueryTestCase(unittest.TestCase):
             content_type="application/json")
         data = response.data.decode("utf8")
 
-        self.assertEqual(response.status_code, 200, "{}: {}".format(
+        self.assertEqual(response.status_code, 201, "{}: {}".format(
             response.status_code, data))
 
         data = json.loads(data)

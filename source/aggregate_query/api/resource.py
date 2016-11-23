@@ -93,4 +93,4 @@ class AggregateQueriesAllResource(Resource):
         assert isinstance(data, dict), data
 
 
-        return data
+        return data, 201
