@@ -4,7 +4,7 @@ MAINTAINER Kor de Jong <k.dejong1@uu.nl>
 RUN groupadd -r uwsgi && useradd -r -g uwsgi uwsgi
 
 COPY requirements.txt /
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY aggregate_query /aggregate_query
 COPY uwsgi.ini /
