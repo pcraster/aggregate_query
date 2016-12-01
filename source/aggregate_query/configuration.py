@@ -5,7 +5,7 @@ import tempfile
 class Configuration:
 
     # Flask
-    SECRET_KEY = os.environ.get("AGGREGATE_QUERY_SECRET_KEY") or \
+    SECRET_KEY = os.environ.get("EMIS_AGGREGATE_QUERY_SECRET_KEY") or \
         "yabbadabbadoo!"
     JSON_AS_ASCII = False
 
