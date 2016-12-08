@@ -26,7 +26,7 @@ class DevelopmentConfiguration(Configuration):
     FLASK_DEBUG_DISABLE_STRICT = True
 
     SQLALCHEMY_DATABASE_URI = \
-        os.environ.get("AGGREGATE_QUERY_DEV_DATABASE_URI") or \
+        os.environ.get("EMIS_AGGREGATE_QUERY_DEV_DATABASE_URI") or \
         "sqlite:///" + os.path.join(tempfile.gettempdir(),
             "aggregate_query-dev.sqlite")
 
@@ -42,12 +42,12 @@ class DevelopmentConfiguration(Configuration):
 
 class TestingConfiguration(Configuration):
 
-    SERVER_NAME = os.environ.get("AGGREGATE_QUERY_SERVER_NAME") or \
+    SERVER_NAME = os.environ.get("EMIS_AGGREGATE_QUERY_SERVER_NAME") or \
         "localhost"
     TESTING = True
 
     SQLALCHEMY_DATABASE_URI = \
-        os.environ.get("AGGREGATE_QUERY_TEST_DATABASE_URI") or \
+        os.environ.get("EMIS_AGGREGATE_QUERY_TEST_DATABASE_URI") or \
         "sqlite:///" + os.path.join(tempfile.gettempdir(),
             "aggregate_query-test.sqlite")
 
@@ -55,7 +55,7 @@ class TestingConfiguration(Configuration):
 class ProductionConfiguration(Configuration):
 
     SQLALCHEMY_DATABASE_URI = \
-        os.environ.get("AGGREGATE_QUERY_DATABASE_URI") or \
+        os.environ.get("EMIS_AGGREGATE_QUERY_DATABASE_URI") or \
         "sqlite:///" + os.path.join(tempfile.gettempdir(),
             "aggregate_query.sqlite")
 

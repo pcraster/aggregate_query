@@ -18,7 +18,7 @@ class AggregateQueryResource(Resource):
         # user_id is not needed
         query = AggregateQueryModel.query.get(query_id)
 
-        if query is None:
+        if query is None or query.user != user_id:
             raise BadRequest("Aggregate query could not be found")
 
 
