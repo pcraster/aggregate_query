@@ -150,8 +150,8 @@ class AggregateQueryTestCase(unittest.TestCase):
         self.assertTrue("model" in query)
         self.assertEqual(query["model"], "a = b + c")
 
-        self.assertTrue("status" in query)
-        self.assertEqual(query["status"], "draft")
+        self.assertTrue("edit_status" in query)
+        self.assertEqual(query["edit_status"], "draft")
 
         self.assertTrue("_links" in query)
 
@@ -210,8 +210,8 @@ class AggregateQueryTestCase(unittest.TestCase):
         self.assertTrue("model" in query)
         self.assertEqual(query["model"], "")
 
-        self.assertTrue("status" in query)
-        self.assertEqual(query["status"], "draft")
+        self.assertTrue("edit_status" in query)
+        self.assertEqual(query["edit_status"], "draft")
 
         self.assertTrue("_links" in query)
 
@@ -247,8 +247,8 @@ class AggregateQueryTestCase(unittest.TestCase):
         self.assertTrue("model" in query)
         self.assertEqual(query["model"], "a = b + c")
 
-        self.assertTrue("status" in query)
-        self.assertEqual(query["status"], "draft")
+        self.assertTrue("edit_status" in query)
+        self.assertEqual(query["edit_status"], "draft")
 
         self.assertTrue("_links" in query)
 
@@ -285,6 +285,46 @@ class AggregateQueryTestCase(unittest.TestCase):
         data = json.loads(data)
 
         self.assertTrue("message" in data)
+
+
+    def test_patch_edit_status(self):
+        user_id = uuid.uuid4()
+        payload = {
+                "user": user_id,
+                "model": "a = b + c"
+            }
+        response = self.client.post("/aggregate_queries",
+            data=json.dumps({"aggregate_query": payload}),
+            content_type="application/json")
+        data = response.data.decode("utf8")
+
+        self.assertEqual(response.status_code, 201, "{}: {}".format(
+            response.status_code, data))
+
+        query = json.loads(data)["aggregate_query"]
+
+        self.assertTrue("edit_status" in query)
+        self.assertEqual(query["edit_status"], "draft")
+
+        self.assertTrue("execute_status" in query)
+        self.assertEqual(query["execute_status"], "pending")
+
+        payload = {
+            "edit_status": "final"
+        }
+
+        uri = query["_links"]["self"]
+        response = self.client.patch(uri,
+            data=json.dumps(payload), content_type="application/json")
+        data = response.data.decode("utf8")
+
+        self.assertEqual(response.status_code, 200, "{}: {}".format(
+            response.status_code, data))
+
+        query = json.loads(data)["aggregate_query"]
+
+        self.assertTrue("edit_status" in query)
+        self.assertEqual(query["edit_status"], "final")
 
 
 if __name__ == "__main__":

@@ -84,8 +84,11 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
         self.assertTrue(hasattr(data, "model"))
         self.assertEqual(data.model, "")
 
-        self.assertTrue(hasattr(data, "status"))
-        self.assertEqual(data.status, "draft")
+        self.assertTrue(hasattr(data, "edit_status"))
+        self.assertEqual(data.edit_status, "draft")
+
+        self.assertTrue(hasattr(data, "execute_status"))
+        self.assertEqual(data.execute_status, "pending")
 
         data.id = uuid.uuid4()
         data, errors = self.schema.dump(data)
@@ -102,8 +105,76 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
         self.assertTrue("model" in query)
         self.assertEqual(query["model"], "")
 
-        self.assertTrue("status" in query)
-        self.assertEqual(query["status"], "draft")
+        self.assertTrue("edit_status" in query)
+        self.assertEqual(query["edit_status"], "draft")
+
+        self.assertTrue("execute_status" in query)
+        self.assertEqual(query["execute_status"], "pending")
+
+        self.assertTrue("_links" in query)
+
+        links = query["_links"]
+
+        self.assertTrue("self" in links)
+        self.assertTrue("collection" in links)
+
+
+    def test_use_case1(self):
+        user_id = uuid.uuid4()
+
+        client_data = {
+                "aggregate_query": {
+                    "user": user_id,
+                    "edit_status": "final",
+                    "execute_status": "queued"
+                }
+            }
+        data, errors = self.schema.load(client_data)
+
+        self.assertFalse(errors)
+
+        self.assertTrue(hasattr(data, "id"))
+        self.assertTrue(isinstance(data.id, uuid.UUID))
+
+        self.assertTrue(hasattr(data, "user"))
+        self.assertTrue(isinstance(data.user, uuid.UUID))
+        self.assertEqual(data.user, user_id)
+
+        self.assertTrue(hasattr(data, "posted_at"))
+        self.assertTrue(isinstance(data.posted_at, datetime.datetime))
+
+        self.assertTrue(hasattr(data, "model"))
+        self.assertEqual(data.model, "")
+
+        self.assertTrue(hasattr(data, "edit_status"))
+        self.assertEqual(data.edit_status, "final")
+
+        self.assertTrue(hasattr(data, "execute_status"))
+        self.assertEqual(data.execute_status, "queued")
+
+        data.id = uuid.uuid4()
+        data, errors = self.schema.dump(data)
+
+        self.assertFalse(errors)
+        self.assertTrue("aggregate_query" in data)
+
+        query = data["aggregate_query"]
+
+        self.assertTrue("id" not in query)
+
+        self.assertTrue("user" in query)
+        self.assertEqual(query["user"], str(user_id))
+
+        self.assertTrue("posted_at" not in query)
+
+        self.assertTrue("model" in query)
+        self.assertEqual(query["model"], "")
+
+        self.assertTrue("edit_status" in query)
+        self.assertEqual(query["edit_status"], "final")
+
+        self.assertTrue("execute_status" in query)
+        self.assertEqual(query["execute_status"], "queued")
 
         self.assertTrue("_links" in query)
 

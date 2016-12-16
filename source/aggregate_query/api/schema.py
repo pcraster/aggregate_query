@@ -17,8 +17,8 @@ def must_be_one_of(
     def validator(
             data):
         if not data in values:
-            raise ValidationError("Value must be one of {}".format(" ".join(
-                values)))
+            raise ValidationError("Value ({}) must be one of ({})".format(
+                data, ", ".join(values)))
 
     return validator
 
@@ -27,14 +27,18 @@ class AggregateQuerySchema(ma.Schema):
 
     class Meta:
         # Fields to include in the serialized result.
-        fields = ("user", "model", "status", "_links")
+        fields = ("user", "model", "edit_status", "execute_status",
+            "_links")
 
 
     id = fields.UUID(dump_only=True)
     user = fields.UUID(required=True)
     model = fields.Str(required=False, missing="")
-    status = fields.Str(required=False, missing="draft",
-        validate=must_be_one_of(["draft", "finished"]))
+    edit_status = fields.Str(required=False, missing="draft",
+        validate=must_be_one_of(["draft", "final"]))
+    execute_status = fields.Str(required=False, missing="pending",
+        validate=must_be_one_of(["pending", "queued", "executing", "failed",
+            "succeeded"]))
     posted_at = fields.DateTime(dump_only=True,
         missing=datetime.datetime.utcnow().isoformat())
     _links = ma.Hyperlinks({
@@ -80,6 +84,7 @@ class AggregateQuerySchema(ma.Schema):
             id=uuid.uuid4(),
             user=data["user"],
             model=data["model"],
-            status = data["status"],
+            edit_status = data["edit_status"],
+            execute_status = data["execute_status"],
             posted_at=datetime.datetime.utcnow()
         )

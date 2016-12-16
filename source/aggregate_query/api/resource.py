@@ -30,6 +30,39 @@ class AggregateQueryResource(Resource):
 
         return data
 
+    def patch(self,
+            user_id,
+            query_id):
+
+        json_data = request.get_json()
+
+        if json_data is None:
+            raise BadRequest("No input data provided")
+
+
+        # user_id is not needed
+        query = AggregateQueryModel.query.get(query_id)
+
+        if query is None or query.user != user_id:
+            raise BadRequest("Aggregate query could not be found")
+
+
+        # Merge current representation and the edits passed in.
+        for field_name in json_data:
+            if hasattr(query, field_name):
+                setattr(query, field_name, json_data[field_name])
+
+        db.session.commit()
+
+
+        data, errors = aggregate_query_schema.dump(query)
+
+        if errors:
+            raise InternalServerError(errors)
+
+
+        return data
+
 
 class AggregateQueriesResource(Resource):
 
