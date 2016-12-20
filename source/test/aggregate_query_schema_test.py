@@ -26,13 +26,13 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
 
     def test_empty1(self):
         client_data = {
-            }
+        }
         data, errors = self.schema.load(client_data)
 
         self.assertTrue(errors)
         self.assertEqual(errors, {
-                "_schema": ["Input data must have a aggregate_query key"]
-            })
+            "_schema": ["Input data must have a aggregate_query key"]
+        })
 
 
     def test_empty2(self):
@@ -98,7 +98,7 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
 
         query = data["aggregate_query"]
 
-        self.assertTrue("id" not in query)
+        self.assertTrue("id" in query)
         self.assertTrue("user" in query)
         self.assertTrue("posted_at" not in query)
 
@@ -135,6 +135,7 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
 
         self.assertTrue(hasattr(data, "id"))
         self.assertTrue(isinstance(data.id, uuid.UUID))
+        id = data.id
 
         self.assertTrue(hasattr(data, "user"))
         self.assertTrue(isinstance(data.user, uuid.UUID))
@@ -152,7 +153,6 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
         self.assertTrue(hasattr(data, "execute_status"))
         self.assertEqual(data.execute_status, "queued")
 
-        data.id = uuid.uuid4()
         data, errors = self.schema.dump(data)
 
         self.assertFalse(errors)
@@ -160,7 +160,8 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
 
         query = data["aggregate_query"]
 
-        self.assertTrue("id" not in query)
+        self.assertTrue("id" in query)
+        self.assertEqual(query["id"], str(id))
 
         self.assertTrue("user" in query)
         self.assertEqual(query["user"], str(user_id))

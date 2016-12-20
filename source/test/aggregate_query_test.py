@@ -144,7 +144,8 @@ class AggregateQueryTestCase(unittest.TestCase):
 
         self.assertEqual(data["aggregate_query"], query)
 
-        self.assertTrue("id" not in query)
+        self.assertTrue("id" in query)
+        self.assertTrue("user" in query)
         self.assertTrue("posted_at" not in query)
 
         self.assertTrue("model" in query)
@@ -204,7 +205,8 @@ class AggregateQueryTestCase(unittest.TestCase):
 
         query = data["aggregate_query"]
 
-        self.assertTrue("id" not in query)
+        self.assertTrue("id" in query)
+        self.assertTrue("user" in query)
         self.assertTrue("posted_at" not in query)
 
         self.assertTrue("model" in query)
@@ -241,7 +243,8 @@ class AggregateQueryTestCase(unittest.TestCase):
 
         query = data["aggregate_query"]
 
-        self.assertTrue("id" not in query)
+        self.assertTrue("id" in query)
+        self.assertTrue("user" in query)
         self.assertTrue("posted_at" not in query)
 
         self.assertTrue("model" in query)

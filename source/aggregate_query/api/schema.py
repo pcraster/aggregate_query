@@ -2,7 +2,7 @@ import datetime
 import uuid
 from marshmallow import fields, post_dump, post_load, pre_load, ValidationError
 from .. import ma
-from .model import AggregateQueryModel
+from .model import AggregateQueryModel, AggregateQueryResultModel
 
 
 def must_not_be_blank(
@@ -27,7 +27,7 @@ class AggregateQuerySchema(ma.Schema):
 
     class Meta:
         # Fields to include in the serialized result.
-        fields = ("user", "model", "edit_status", "execute_status",
+        fields = ("id", "user", "model", "edit_status", "execute_status",
             "_links")
 
 
@@ -86,5 +86,61 @@ class AggregateQuerySchema(ma.Schema):
             model=data["model"],
             edit_status = data["edit_status"],
             execute_status = data["execute_status"],
+            posted_at=datetime.datetime.utcnow()
+        )
+
+
+class AggregateQueryResultSchema(ma.Schema):
+
+    class Meta:
+        # Fields to include in the serialized result.
+        fields = ("id", "uri", "_links")
+
+
+    id = fields.UUID(required=True)
+    uri = fields.Str(required=True, validate=must_not_be_blank)
+    posted_at = fields.DateTime(dump_only=True,
+        missing=datetime.datetime.utcnow().isoformat())
+    _links = ma.Hyperlinks({
+            "self": ma.URLFor("api.aggregate_query_result", query_id="<id>"),
+            "collection": ma.URLFor("api.aggregate_query_results")
+        })
+
+
+    def key(self,
+            many):
+        return "aggregate_query_results" if many else "aggregate_query_result"
+
+
+    @pre_load(
+        pass_many=True)
+    def unwrap(self,
+            data,
+            many):
+        key = self.key(many)
+
+        if key not in data:
+            raise ValidationError("Input data must have a {} key".format(key))
+
+        return data[key]
+
+
+    @post_dump(
+        pass_many=True)
+    def wrap(self,
+            data, many):
+        key = self.key(many)
+
+        return {
+            key: data
+        }
+
+
+    @post_load
+    def make_object(self,
+            data):
+        return AggregateQueryResultModel(
+            id=data["id"],
+            uri=data["uri"],
             posted_at=datetime.datetime.utcnow()
         )
