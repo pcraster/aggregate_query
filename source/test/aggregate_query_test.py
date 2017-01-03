@@ -305,6 +305,7 @@ class AggregateQueryTestCase(unittest.TestCase):
             response.status_code, data))
 
         query = json.loads(data)["aggregate_query"]
+        query_id = query["id"]
 
         self.assertTrue("edit_status" in query)
         self.assertEqual(query["edit_status"], "draft")
@@ -328,6 +329,9 @@ class AggregateQueryTestCase(unittest.TestCase):
 
         self.assertTrue("edit_status" in query)
         self.assertEqual(query["edit_status"], "final")
+
+        self.assertEqual(query["id"], query_id)
+        self.assertEqual(query["user"], str(user_id))
 
 
 if __name__ == "__main__":
