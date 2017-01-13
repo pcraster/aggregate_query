@@ -35,15 +35,15 @@ class AggregateQueryTestCase(unittest.TestCase):
         payloads = [
                 {
                     "user": self.user1,
-                    "model": "a = b + c"
+                    "model": {"meh1": "mah1"}
                 },
                 {
                     "user": self.user2,
-                    "model": "a^2 = sqrt(b^2 + c^2)"
+                    "model": {"meh2": "mah2"}
                 },
                 {
                     "user": self.user1,
-                    "model": "a = b - c"
+                    "model": {"meh3": "mah3"}
                 },
             ]
 
@@ -149,7 +149,7 @@ class AggregateQueryTestCase(unittest.TestCase):
         self.assertTrue("posted_at" not in query)
 
         self.assertTrue("model" in query)
-        self.assertEqual(query["model"], "a = b + c")
+        self.assertEqual(query["model"], {"meh1": "mah1"})
 
         self.assertTrue("edit_status" in query)
         self.assertEqual(query["edit_status"], "draft")
@@ -189,7 +189,8 @@ class AggregateQueryTestCase(unittest.TestCase):
 
     def test_post_empty_aggregate_query(self):
         payload = {
-                "user": uuid.uuid4()
+                "user": uuid.uuid4(),
+                "model": {"meh": "mah"}
             }
         response = self.client.post("/aggregate_queries",
             data=json.dumps({"aggregate_query": payload}),
@@ -210,7 +211,7 @@ class AggregateQueryTestCase(unittest.TestCase):
         self.assertTrue("posted_at" not in query)
 
         self.assertTrue("model" in query)
-        self.assertEqual(query["model"], "")
+        self.assertEqual(query["model"], {"meh": "mah"})
 
         self.assertTrue("edit_status" in query)
         self.assertEqual(query["edit_status"], "draft")
@@ -227,7 +228,7 @@ class AggregateQueryTestCase(unittest.TestCase):
         user_id = uuid.uuid4()
         payload = {
                 "user": user_id,
-                "model": "a = b + c"
+                "model": {"meh": "mah"}
             }
         response = self.client.post("/aggregate_queries",
             data=json.dumps({"aggregate_query": payload}),
@@ -248,7 +249,7 @@ class AggregateQueryTestCase(unittest.TestCase):
         self.assertTrue("posted_at" not in query)
 
         self.assertTrue("model" in query)
-        self.assertEqual(query["model"], "a = b + c")
+        self.assertEqual(query["model"], {"meh": "mah"})
 
         self.assertTrue("edit_status" in query)
         self.assertEqual(query["edit_status"], "draft")
@@ -294,7 +295,7 @@ class AggregateQueryTestCase(unittest.TestCase):
         user_id = uuid.uuid4()
         payload = {
                 "user": user_id,
-                "model": "a = b + c"
+                "model": {"meh": "mah"}
             }
         response = self.client.post("/aggregate_queries",
             data=json.dumps({"aggregate_query": payload}),

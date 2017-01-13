@@ -43,6 +43,7 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
 
         self.assertTrue(errors)
         self.assertEqual(errors, {
+                "model": ["Missing data for required field."],
                 "user": ["Missing data for required field."]
             })
 
@@ -50,7 +51,8 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
     def test_invalid_user(self):
         client_data = {
                 "aggregate_query": {
-                    "user": "blah"
+                    "user": "meh",
+                    "model": {"meh": "mah"}
                 }
             }
         data, errors = self.schema.load(client_data)
@@ -65,7 +67,8 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
 
         client_data = {
                 "aggregate_query": {
-                    "user": uuid.uuid4()
+                    "user": uuid.uuid4(),
+                    "model": {"meh": "mah"}
                 }
             }
         data, errors = self.schema.load(client_data)
@@ -82,7 +85,8 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
         self.assertTrue(isinstance(data.posted_at, datetime.datetime))
 
         self.assertTrue(hasattr(data, "model"))
-        self.assertEqual(data.model, "")
+        self.assertTrue(isinstance(data.model, dict))
+        self.assertEqual(data.model, {"meh": "mah"})
 
         self.assertTrue(hasattr(data, "edit_status"))
         self.assertEqual(data.edit_status, "draft")
@@ -103,7 +107,8 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
         self.assertTrue("posted_at" not in query)
 
         self.assertTrue("model" in query)
-        self.assertEqual(query["model"], "")
+        self.assertTrue(isinstance(query["model"], dict))
+        self.assertEqual(query["model"], {"meh": "mah"})
 
         self.assertTrue("edit_status" in query)
         self.assertEqual(query["edit_status"], "draft")
@@ -125,6 +130,7 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
         client_data = {
                 "aggregate_query": {
                     "user": user_id,
+                    "model": {"meh": "mah"},
                     "edit_status": "final",
                     "execute_status": "queued"
                 }
@@ -145,7 +151,7 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
         self.assertTrue(isinstance(data.posted_at, datetime.datetime))
 
         self.assertTrue(hasattr(data, "model"))
-        self.assertEqual(data.model, "")
+        self.assertEqual(data.model, {"meh": "mah"})
 
         self.assertTrue(hasattr(data, "edit_status"))
         self.assertEqual(data.edit_status, "final")
@@ -169,7 +175,7 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
         self.assertTrue("posted_at" not in query)
 
         self.assertTrue("model" in query)
-        self.assertEqual(query["model"], "")
+        self.assertEqual(query["model"], {"meh": "mah"})
 
         self.assertTrue("edit_status" in query)
         self.assertEqual(query["edit_status"], "final")
