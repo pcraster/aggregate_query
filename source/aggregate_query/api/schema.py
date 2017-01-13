@@ -33,7 +33,7 @@ class AggregateQuerySchema(ma.Schema):
 
     id = fields.UUID(dump_only=True)
     user = fields.UUID(required=True)
-    model = fields.Str(required=False, missing="")
+    model = fields.Dict(required=True)
     edit_status = fields.Str(required=False, missing="draft",
         validate=must_be_one_of(["draft", "final"]))
     execute_status = fields.Str(required=False, missing="pending",
