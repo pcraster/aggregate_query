@@ -12,6 +12,7 @@ api_restful.add_resource(AggregateQueriesAllResource,
 # Aggregate query by user-id and query-id.
 # - Get query by user-id and query-id
 # - Patch query by user-id and query-id
+# - Delete by user-id and query-id
 api_restful.add_resource(AggregateQueryResource,
     "/aggregate_queries/<uuid:user_id>/<uuid:query_id>",
     endpoint="aggregate_query")

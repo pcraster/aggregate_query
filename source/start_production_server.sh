@@ -2,5 +2,5 @@
 set -e
 
 
-docker build -t test/aggregate_query .
-docker run -p3031:3031 test/aggregate_query
+docker build -t test/emis_aggregate_query .
+docker run -p3031:3031 test/emis_aggregate_query

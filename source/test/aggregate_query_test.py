@@ -2,8 +2,8 @@ import os.path
 import unittest
 import uuid
 from flask import current_app, json
-from aggregate_query import create_app, db
-from aggregate_query.api.schema import *
+from emis_aggregate_query import create_app, db
+from emis_aggregate_query.api.schema import *
 
 
 class AggregateQueryTestCase(unittest.TestCase):
@@ -146,7 +146,8 @@ class AggregateQueryTestCase(unittest.TestCase):
 
         self.assertTrue("id" in query)
         self.assertTrue("user" in query)
-        self.assertTrue("posted_at" not in query)
+        self.assertTrue("posted_at" in query)
+        self.assertTrue("patched_at" in query)
 
         self.assertTrue("model" in query)
         self.assertEqual(query["model"], {"meh1": "mah1"})
@@ -208,7 +209,8 @@ class AggregateQueryTestCase(unittest.TestCase):
 
         self.assertTrue("id" in query)
         self.assertTrue("user" in query)
-        self.assertTrue("posted_at" not in query)
+        self.assertTrue("posted_at" in query)
+        self.assertTrue("patched_at" in query)
 
         self.assertTrue("model" in query)
         self.assertEqual(query["model"], {"meh": "mah"})
@@ -246,7 +248,8 @@ class AggregateQueryTestCase(unittest.TestCase):
 
         self.assertTrue("id" in query)
         self.assertTrue("user" in query)
-        self.assertTrue("posted_at" not in query)
+        self.assertTrue("posted_at" in query)
+        self.assertTrue("patched_at" in query)
 
         self.assertTrue("model" in query)
         self.assertEqual(query["model"], {"meh": "mah"})
@@ -333,6 +336,56 @@ class AggregateQueryTestCase(unittest.TestCase):
 
         self.assertEqual(query["id"], query_id)
         self.assertEqual(query["user"], str(user_id))
+
+
+    def test_delete_aggregate_query(self):
+        self.post_aggregate_queries()
+
+        response = self.client.get("/aggregate_queries")
+        data = response.data.decode("utf8")
+        data = json.loads(data)
+        queries = data["aggregate_queries"]
+        query = queries[0]
+        uri = query["_links"]["self"]
+        response = self.client.delete(uri)
+
+        data = response.data.decode("utf8")
+
+        self.assertEqual(response.status_code, 200, "{}: {}".format(
+            response.status_code, data))
+
+        data = json.loads(data)
+
+        self.assertTrue("aggregate_query" in data)
+
+        self.assertEqual(data["aggregate_query"], query)
+
+        self.assertTrue("id" in query)
+        self.assertTrue("user" in query)
+        self.assertTrue("posted_at" in query)
+        self.assertTrue("patched_at" in query)
+
+        self.assertTrue("model" in query)
+        self.assertEqual(query["model"], {"meh1": "mah1"})
+
+        self.assertTrue("edit_status" in query)
+        self.assertEqual(query["edit_status"], "draft")
+
+        self.assertTrue("_links" in query)
+
+        links = query["_links"]
+
+        self.assertTrue("self" in links)
+        self.assertEqual(links["self"], uri)
+
+        self.assertTrue("collection" in links)
+
+
+        response = self.client.get("/aggregate_queries")
+        data = response.data.decode("utf8")
+        data = json.loads(data)
+        queries = data["aggregate_queries"]
+        self.assertEqual(len(queries), 2)
 
 
 if __name__ == "__main__":

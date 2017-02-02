@@ -6,7 +6,7 @@ MAINTAINER Kor de Jong <k.dejong1@uu.nl>
 # RUN pip install -r requirements.txt
 
 COPY cmd.sh server.py server_flask.py server_wsgi.py uwsgi.ini /
-COPY aggregate_query /aggregate_query
+COPY emis_aggregate_query /emis_aggregate_query
 COPY test /test
 
 CMD ["/cmd.sh"]

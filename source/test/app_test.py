@@ -1,6 +1,6 @@
 import unittest
 from flask import current_app, json
-from aggregate_query import create_app
+from emis_aggregate_query import create_app
 
 
 class AppTest(unittest.TestCase):

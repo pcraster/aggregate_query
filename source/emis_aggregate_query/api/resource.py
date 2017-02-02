@@ -64,6 +64,31 @@ class AggregateQueryResource(Resource):
         return data
 
 
+    def delete(self,
+            user_id,
+            query_id):
+
+        # user_id is not needed
+        query = AggregateQueryModel.query.get(query_id)
+
+        if query is None or query.user != user_id:
+            raise BadRequest("Aggregate query could not be found")
+
+
+        # Delete query from database.
+        db.session.delete(query)
+        db.session.commit()
+
+
+        data, errors = aggregate_query_schema.dump(query)
+
+        if errors:
+            raise InternalServerError(errors)
+
+
+        return data
+
+
 class AggregateQueriesResource(Resource):
 
     def get(self,

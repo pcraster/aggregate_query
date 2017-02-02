@@ -9,6 +9,7 @@ class AggregateQueryModel(db.Model):
     edit_status = db.Column(db.Unicode(40))
     execute_status = db.Column(db.Unicode(40))
     posted_at = db.Column(db.DateTime)
+    patched_at = db.Column(db.DateTime)
 
 
 class AggregateQueryResultModel(db.Model):

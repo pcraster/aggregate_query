@@ -1,8 +1,8 @@
 import datetime
 import unittest
 import uuid
-from aggregate_query import create_app
-from aggregate_query.api.schema import *
+from emis_aggregate_query import create_app
+from emis_aggregate_query.api.schema import *
 
 
 class AggregateQueryResultSchemaTestCase(unittest.TestCase):
@@ -74,7 +74,7 @@ class AggregateQueryResultSchemaTestCase(unittest.TestCase):
 
         self.assertTrue(errors)
         self.assertEqual(errors, {
-                "uri": ["Data not provided"]
+                "uri": ["Shorter than minimum length 1."]
             })
 
 

@@ -2,8 +2,8 @@ import os.path
 import unittest
 import uuid
 from flask import current_app, json
-from aggregate_query import create_app, db
-from aggregate_query.api.schema import *
+from emis_aggregate_query import create_app, db
+from emis_aggregate_query.api.schema import *
 
 
 class AggregateQueryResultTestCase(unittest.TestCase):

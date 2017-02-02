@@ -1,26 +1,9 @@
 import datetime
 import uuid
 from marshmallow import fields, post_dump, post_load, pre_load, ValidationError
+from marshmallow.validate import Length, OneOf
 from .. import ma
 from .model import AggregateQueryModel, AggregateQueryResultModel
-
-
-def must_not_be_blank(
-        data):
-    if not data:
-        raise ValidationError("Data not provided")
-
-
-def must_be_one_of(
-        values):
-
-    def validator(
-            data):
-        if not data in values:
-            raise ValidationError("Value ({}) must be one of ({})".format(
-                data, ", ".join(values)))
-
-    return validator
 
 
 class AggregateQuerySchema(ma.Schema):
@@ -28,18 +11,20 @@ class AggregateQuerySchema(ma.Schema):
     class Meta:
         # Fields to include in the serialized result.
         fields = ("id", "user", "model", "edit_status", "execute_status",
-            "_links")
+            "posted_at", "patched_at", "_links")
 
 
     id = fields.UUID(dump_only=True)
     user = fields.UUID(required=True)
     model = fields.Dict(required=True)
     edit_status = fields.Str(required=False, missing="draft",
-        validate=must_be_one_of(["draft", "final"]))
+        validate=OneOf(["draft", "final"]))
     execute_status = fields.Str(required=False, missing="pending",
-        validate=must_be_one_of(["pending", "queued", "executing", "failed",
+        validate=OneOf(["pending", "queued", "executing", "failed",
             "succeeded"]))
     posted_at = fields.DateTime(dump_only=True,
+        missing=datetime.datetime.utcnow().isoformat())
+    patched_at = fields.DateTime(dump_only=True,
         missing=datetime.datetime.utcnow().isoformat())
     _links = ma.Hyperlinks({
             "self": ma.URLFor("api.aggregate_query", user_id="<user>",
@@ -86,7 +71,8 @@ class AggregateQuerySchema(ma.Schema):
             model=data["model"],
             edit_status = data["edit_status"],
             execute_status = data["execute_status"],
-            posted_at=datetime.datetime.utcnow()
+            posted_at=datetime.datetime.utcnow(),
+            patched_at=datetime.datetime.utcnow(),
         )
 
 
@@ -98,7 +84,7 @@ class AggregateQueryResultSchema(ma.Schema):
 
 
     id = fields.UUID(required=True)
-    uri = fields.Str(required=True, validate=must_not_be_blank)
+    uri = fields.Str(required=True, validate=Length(min=1))
     posted_at = fields.DateTime(dump_only=True,
         missing=datetime.datetime.utcnow().isoformat())
     _links = ma.Hyperlinks({

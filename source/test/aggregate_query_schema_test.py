@@ -1,8 +1,8 @@
 import datetime
 import unittest
 import uuid
-from aggregate_query import create_app
-from aggregate_query.api.schema import *
+from emis_aggregate_query import create_app
+from emis_aggregate_query.api.schema import *
 
 
 class AggregateQuerySchemaTestCase(unittest.TestCase):
@@ -84,6 +84,9 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
         self.assertTrue(hasattr(data, "posted_at"))
         self.assertTrue(isinstance(data.posted_at, datetime.datetime))
 
+        self.assertTrue(hasattr(data, "patched_at"))
+        self.assertTrue(isinstance(data.patched_at, datetime.datetime))
+
         self.assertTrue(hasattr(data, "model"))
         self.assertTrue(isinstance(data.model, dict))
         self.assertEqual(data.model, {"meh": "mah"})
@@ -104,7 +107,8 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
 
         self.assertTrue("id" in query)
         self.assertTrue("user" in query)
-        self.assertTrue("posted_at" not in query)
+        self.assertTrue("posted_at" in query)
+        self.assertTrue("patched_at" in query)
 
         self.assertTrue("model" in query)
         self.assertTrue(isinstance(query["model"], dict))
@@ -150,6 +154,9 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
         self.assertTrue(hasattr(data, "posted_at"))
         self.assertTrue(isinstance(data.posted_at, datetime.datetime))
 
+        self.assertTrue(hasattr(data, "patched_at"))
+        self.assertTrue(isinstance(data.patched_at, datetime.datetime))
+
         self.assertTrue(hasattr(data, "model"))
         self.assertEqual(data.model, {"meh": "mah"})
 
@@ -172,7 +179,8 @@ class AggregateQuerySchemaTestCase(unittest.TestCase):
         self.assertTrue("user" in query)
         self.assertEqual(query["user"], str(user_id))
 
-        self.assertTrue("posted_at" not in query)
+        self.assertTrue("posted_at" in query)
+        self.assertTrue("patched_at" in query)
 
         self.assertTrue("model" in query)
         self.assertEqual(query["model"], {"meh": "mah"})
