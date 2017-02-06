@@ -16,3 +16,9 @@ class AggregateQueryResultModel(db.Model):
     id = db.Column(UUIDType(), primary_key=True)
     uri = db.Column(db.UnicodeText)
     posted_at = db.Column(db.DateTime)
+
+
+class AggregateQueryMessageModel(db.Model):
+    id = db.Column(UUIDType(), primary_key=True)
+    message = db.Column(db.UnicodeText)
+    posted_at = db.Column(db.DateTime)

@@ -2,8 +2,8 @@ from werkzeug.exceptions import *
 from flask_restful import Resource
 from flask import request
 from .. import db
-from .model import AggregateQueryModel, AggregateQueryResultModel
-from .schema import AggregateQuerySchema, AggregateQueryResultSchema
+from .model import *
+from .schema import *
 
 
 aggregate_query_schema = AggregateQuerySchema()
@@ -216,6 +216,75 @@ class AggregateQueryResultsResource(Resource):
         # From record in database to dict representing an aggregate query.
         data, errors = aggregate_query_result_schema.dump(
             AggregateQueryResultModel.query.get(result.id))
+        assert not errors, errors
+        assert isinstance(data, dict), data
+
+
+        return data, 201
+
+
+aggregate_query_message_schema = AggregateQueryMessageSchema()
+
+
+class AggregateQueryMessageResource(Resource):
+
+    def get(self,
+            query_id):
+
+        message = AggregateQueryMessageModel.query.get(query_id)
+
+        if message is None:
+            raise BadRequest("Aggregate query message could not be found")
+
+
+        data, errors = aggregate_query_message_schema.dump(message)
+
+        if errors:
+            raise InternalServerError(errors)
+
+
+        return data
+
+
+class AggregateQueryMessagesResource(Resource):
+
+    def get(self):
+
+        messages = AggregateQueryMessageModel.query.all()
+        data, errors = aggregate_query_message_schema.dump(messages, many=True)
+
+        if errors:
+            raise InternalServerError(errors)
+
+        assert isinstance(data, dict), data
+
+
+        return data
+
+
+    def post(self):
+
+        json_data = request.get_json()
+
+        if json_data is None:
+            raise BadRequest("No input data provided")
+
+
+        # Validate and deserialize input.
+        message, errors = aggregate_query_message_schema.load(json_data)
+
+        if errors:
+            raise UnprocessableEntity(errors)
+
+
+        # Write message to database.
+        db.session.add(message)
+        db.session.commit()
+
+
+        # From record in database to dict representing an aggregate query.
+        data, errors = aggregate_query_message_schema.dump(
+            AggregateQueryMessageModel.query.get(message.id))
         assert not errors, errors
         assert isinstance(data, dict), data
 
