@@ -42,9 +42,9 @@ class DevelopmentConfiguration(Configuration):
 
 class TestConfiguration(Configuration):
 
-    SERVER_NAME = os.environ.get("EMIS_AGGREGATE_QUERY_SERVER_NAME") or \
-        "localhost"
-    TESTING = True
+    # SERVER_NAME = os.environ.get("EMIS_AGGREGATE_QUERY_SERVER_NAME") or \
+    #     "localhost"
+    # TESTING = True
 
     SQLALCHEMY_DATABASE_URI = \
         os.environ.get("EMIS_AGGREGATE_QUERY_TEST_DATABASE_URI") or \
